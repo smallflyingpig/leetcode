@@ -12,8 +12,8 @@ Output: -1->0->3->4->5
 
 result:
 
-Runtime: 1976 ms, faster than 25.50% of Python3 online submissions for Insertion Sort List.
-Memory Usage: 15.1 MB, less than 33.93% of Python3 online submissions for Insertion Sort List.
+Runtime: 1616 ms, faster than 44.36% of Python3 online submissions for Insertion Sort List.
+Memory Usage: 15.1 MB, less than 46.25% of Python3 online submissions for Insertion Sort List.
 
 
 
@@ -43,19 +43,23 @@ class ListNode:
         return(str(data_list))
 
 class Solution:
-    def insert(self, sorted_list:ListNode, data):
+    def _insert(self, sorted_list:ListNode, data):
         head = sorted_list
         if data.val <= head.val:
             data.next = head
             sorted_list = data
             return sorted_list
-        while True:
-            if head.next is None or head.next.val >= data.val:
-                data.next = head.next
-                head.next = data
+        head_next = head.next
+        while head_next is not None:
+            if head_next.val >= data.val:
+                data.next, head.next = head_next, data
                 break
             else:
-                head = head.next
+                head = head_next
+                head_next = head.next
+        if head_next is None:
+            head.next = data
+            
         return sorted_list
 
     def insertionSortList(self, head: ListNode) -> ListNode:
@@ -63,15 +67,15 @@ class Solution:
             return head
         if head.next is None:
             return head
-        sorted_list = head
-        head = head.next
+        sorted_list, head = head, head.next
         sorted_list.next = None
         while head is not None:
             #print(head)
             #print(sorted_list)
-            data = head
-            head = head.next
-            sorted_list = self.insert(sorted_list, data)
+            data, head = head, head.next
+            data.next = None
+            sorted_list = self._insert(sorted_list, data)
+            del data
         return sorted_list
 
 def main():
